@@ -56,6 +56,7 @@ public class Server {
         try {
             long startTime = System.currentTimeMillis();
             String reply;
+
             while((reply=in.readLine())==null && startTime+20000>System.currentTimeMillis()){
 
             }
@@ -68,10 +69,13 @@ public class Server {
                 }
                 if(state.equals("deliver") && reply.charAt(0)!='2'){
                     System.out.println("Mail sending failed.");
-                    state="wait";
+                    state="closed";
                 }
-
-                if(reply.charAt(0)=='4'){
+                if(reply.charAt(0)=='4') {
+                    state="closed";
+                    return;
+                }
+                if(reply.charAt(0)=='5'){
                 if(state.equals("wait") && prevstate.equals("begin")){
                     state="begin";
                     prevstate="closed";
@@ -88,12 +92,14 @@ public class Server {
                 }else if(state.equals("rcpt") && prevstate.equals("rcpt")){
                     System.out.println("Error in recipient mail address.");
                 }else
-                System.out.println("Error "+reply);
+                    System.out.println("Error "+reply);
+                  //  state="closed";
                 }
               }
              else System.out.println("Server timeout.");
-        } catch (IOException e) {
+        } catch (Exception e){
             e.printStackTrace();
+            state="closed";
         }
     }
     void Request(String req){

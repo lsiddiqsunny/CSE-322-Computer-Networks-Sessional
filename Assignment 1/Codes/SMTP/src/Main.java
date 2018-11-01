@@ -48,7 +48,7 @@ public class Main {
             }
         }
 
-        System.out.println("Connection closed successfully.");
+        System.out.println("Connection closed.");
 
 
 

@@ -1,1 +1,0 @@
-just click on 2 .bat files

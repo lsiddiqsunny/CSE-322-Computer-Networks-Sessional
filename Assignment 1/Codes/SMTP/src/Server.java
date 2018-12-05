@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class Server {
     private Socket smtpSocket=null;
@@ -15,11 +16,11 @@ public class Server {
 
     }
 
-    public Server(InetAddress mailHost, int port) {
+    public Server(InetAddress mailHost, int port,String name,String pass) throws SocketException {
         prevstate="closed";
         state="begin";
         try {
-            smtpSocket=new Socket(mailHost,25);
+            smtpSocket=new Socket(mailHost,port);//connecting to host
         } catch (IOException e) {
             System.out.println(e.toString());
             state="closed";
@@ -40,11 +41,23 @@ public class Server {
         } catch (IOException e) {
             System.out.println(e.toString());
             state="closed";
-
-
-
         }
+        if(state.equals("begin")){
+            smtpSocket.setSoTimeout(100000);
 
+            try {
+                System.out.println("0 : "+in.readLine());
+                pr.println("AUTH LOGIN");
+                System.out.println("1 : "+in.readLine());
+                pr.println(name);
+                System.out.println("2 : "+in.readLine());
+                pr.println(pass);
+                System.out.println("3 : "+in.readLine());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
     String getState(){
@@ -54,12 +67,9 @@ public class Server {
     void Reply(){
        // System.out.println(state);
         try {
-            long startTime = System.currentTimeMillis();
             String reply;
 
-            while((reply=in.readLine())==null && startTime+20000>System.currentTimeMillis()){
-
-            }
+            reply=in.readLine();
             if(reply!=null) {
 
                 System.out.println(reply);
@@ -80,23 +90,24 @@ public class Server {
                     state="begin";
                     prevstate="closed";
                 }
-                else if(state.equals("from")){
+                else if(state.equals("from") && prevstate.equals("wait")){
                     state="wait";
-                    System.out.println("Error in your mail address.");
+                   // System.out.println("Error in your mail address.");
                 }
                 else if(state.equals("rcpt") && prevstate.equals("from")){
-                    System.out.println("Error in recipient mail address.");
+                   // System.out.println("Error in recipient mail address.");
                     state="from";
                     prevstate="wait";
 
-                }else if(state.equals("rcpt") && prevstate.equals("rcpt")){
-                    System.out.println("Error in recipient mail address.");
-                }else
-                    System.out.println("Error "+reply);
+                }else if(state.equals("from") && prevstate.equals("begin")){
+                    state="begin";
+                    prevstate="begin";
+                }
+                    System.out.println(reply.substring(4,reply.length()));
                   //  state="closed";
                 }
               }
-             else System.out.println("Server timeout.");
+
         } catch (Exception e){
             e.printStackTrace();
             state="closed";
@@ -104,7 +115,7 @@ public class Server {
     }
     void Request(String req){
 
-            if(state.equals("data")){
+            if(state.equalsIgnoreCase("data")){
                 pr.println(req);
                 if(req.equals(".")){
                     state="deliver";
@@ -118,32 +129,54 @@ public class Server {
 
             String check= req.substring(0,4);
 
-            if(check.equals("RSET")){
-                state.equals("wait");
+            if(check.equalsIgnoreCase("RSET")){
+                state="wait";
+                prevstate="begin";
             }
-            if(check.equals("QUIT")){
+            if(check.equalsIgnoreCase("QUIT")){
                 state="closed";
             }
 
-            if(state.equals("begin") && check.equals("HELO")){
+            if(state.equals("begin") && check.equalsIgnoreCase("HELO")){
                 prevstate="begin";
                 state="wait";
             }
-            if(state.equals("wait") && check.equals("MAIL")){
+           else if(state.equals("begin") && check.equalsIgnoreCase("MAIL")){
+                prevstate="begin";
+                state="from";
+            }
+            else if(state.equals("begin")){
+                prevstate="begin";
+                state="begin";
+            }
+
+            if(state.equals("wait") && check.equalsIgnoreCase("MAIL")){
                 prevstate="wait";
                 state="from";
             }
-            if(state.equals("from") && check.equals("RCPT")){
+            if(state.equals("wait") && !check.equalsIgnoreCase("MAIL")){
+                prevstate="wait";
+                state="wait";
+            }
+            if(state.equals("from") && check.equalsIgnoreCase("RCPT")){
                 prevstate="from";
                 state="rcpt";
             }
-            if(state.equals("rcpt") && check.equals("RCPT")){
+            if(state.equals("from") && !check.equalsIgnoreCase("RCPT")){
+                prevstate="from";
+                state="from";
+            }
+            if(state.equals("rcpt") && check.equalsIgnoreCase("RCPT")){
                 prevstate="rcpt";
                 state="rcpt";
             }
-            if(state.equals("rcpt") && check.equals("DATA")){
+            else if(state.equals("rcpt") && check.equalsIgnoreCase("DATA")){
                 prevstate="rcpt";
                 state="data";
+            }
+            else if(state.equals("rcpt")){
+                prevstate="rcpt";
+                state="rcpt";
             }
 
 

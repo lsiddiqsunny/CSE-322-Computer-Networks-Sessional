@@ -1,7 +1,7 @@
 HELO DESKTOP-VGRAGF8
 MAIL From:<lsiddiqsunny@gmail.com>
 RCPT To:<lsiddiqsunny@ieee.org>
-RCPT To:<nadia4anjum@gmail.com>
+RCPT To:<rakinhaider@gmail.com>
 DATA
 From: "Latif Siddiq" <lsiddiqsunny@gmail.com>
 To: Sunny <lsiddiqsunny@ieee.org>

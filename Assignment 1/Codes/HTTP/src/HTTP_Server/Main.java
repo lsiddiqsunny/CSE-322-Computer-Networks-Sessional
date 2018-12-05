@@ -5,11 +5,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
 
+import static HTTP_Server.Main.logfile;
+
 public class Main {
     static final int PORT = 6789;
+    static final File logfile=new File("log.txt");
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverConnect = new ServerSocket(PORT);
+        FileWriter fr=new FileWriter(logfile);
+        fr.write(new Date().toString()+" : "+"Server started.\r\n");
+        fr.close();
         System.out.println("Server started.\nListening for connections on port : " + PORT + " ...\n");
         while(true)
         {
@@ -19,6 +25,7 @@ public class Main {
             t.start();
 
         }
+
     }
 }
 
@@ -43,6 +50,10 @@ class Worker implements Runnable {
                 String input = inFromClient.readLine();
                 System.out.println("Input : "+input);
                 String[] args=input.split(" ");
+
+                FileWriter fr=new FileWriter(logfile,true);
+                fr.write(new Date().toString()+" : "+input+"\r\n");
+                fr.close();
                 /*
                 for(String s:args){
                     System.out.println(s);
@@ -66,11 +77,26 @@ class Worker implements Runnable {
                             if(fileextension.equals("html") || fileextension.equals("htm")){
                                 filecontent="text/html";
                             }
-                            else if(fileextension.equals("jpeg")){
+                            else if(fileextension.equals("jpeg")||fileextension.equals("jpg")){
                                 filecontent="image/jpeg";
                             }
                             else if(fileextension.equals("pdf")){
                                 filecontent="application/pdf";
+                            }
+                            else if(fileextension.equals("css")){
+                                filecontent="text/css";
+                            }
+                            else if(fileextension.equals("png")){
+                                filecontent="image/png";
+                            }
+                            else if(fileextension.equals("bmp")){
+                                filecontent="image/bmp";
+                            }
+                            else if(fileextension.equals("tiff")){
+                                filecontent="image/tiff";
+                            }
+                            else if(fileextension.equals("svg")){
+                                filecontent="image/svg+xml";
                             }
                             //System.out.println(fileextension+" " +filecontent);
                             ShowFile("./"+args[1],filecontent);
@@ -84,7 +110,7 @@ class Worker implements Runnable {
                 else if(args[0].equals("POST")){
 
                     while((input = inFromClient.readLine()).length() != 0){
-                       // System.out.println(input);
+                        //System.out.println(input);
                     }
 
                     String payload = new String("");
@@ -101,6 +127,7 @@ class Worker implements Runnable {
                     }
                     else{
                         PrintWriter fi=new PrintWriter(f);
+
                         fi.write("<html><body><h1>Your name is "+payload+"</h1></body></html>");
                         fi.close();
 
@@ -127,8 +154,14 @@ class Worker implements Runnable {
 
     }
     void NotImplementError() throws IOException {
+        String mssg="Error 501 : Command Not Implemented\r\n";
 
-        System.out.println("Error 501 : Command Not Implemented");
+
+        FileWriter fr=new FileWriter(logfile,true);
+        fr.write(new Date().toString()+" : "+mssg);
+        fr.close();
+
+        System.out.print(mssg);
         File f = new File("501.html");
         byte[] fileData = FiletoByte(f);
         outToClient.println("HTTP/1.1 404 Not Found");
@@ -138,14 +171,18 @@ class Worker implements Runnable {
         outToClient.println("Content-length: " + f.length());
         outToClient.println();
         outToClient.flush();
-        outToClient.print(f);
+        //outToClient.print(f);
 
         fileOut.write(fileData,0,(int)f.length());
         fileOut.flush();
     }
     void FileNotFound() throws IOException {
 
-        System.out.println("Error 404 : File not found");
+        String mssg="Error 404 : File not found\r\n";
+        FileWriter fr=new FileWriter(logfile,true);
+        fr.write(new Date().toString()+" : "+mssg);
+        fr.close();
+        System.out.print(mssg);
         File f = new File("404.html");
         byte[] fileData = FiletoByte(f);
         outToClient.println("HTTP/1.1 404 Not Found");
@@ -155,7 +192,7 @@ class Worker implements Runnable {
         outToClient.println("Content-length: " + f.length());
         outToClient.println();
         outToClient.flush();
-        outToClient.print(f);
+       // outToClient.print(f);
 
         fileOut.write(fileData,0,(int)f.length());
         fileOut.flush();
@@ -168,6 +205,11 @@ class Worker implements Runnable {
             FileNotFound();
             return;
         }
+        String mssg="HTTP/1.1 200 OK\r\n";
+        FileWriter fr=new FileWriter(logfile,true);
+        fr.write(new Date().toString()+" : "+mssg);
+        fr.close();
+
         byte[] fileData = FiletoByte(f);
         outToClient.println("HTTP/1.1 200 OK");
         outToClient.println("Server: Local Host");
@@ -176,7 +218,7 @@ class Worker implements Runnable {
         outToClient.println("Content-length: " + f.length());
         outToClient.println();
         outToClient.flush();
-        outToClient.print(f);
+        //outToClient.print(f);
 
         fileOut.write(fileData,0,(int)f.length());
         fileOut.flush();

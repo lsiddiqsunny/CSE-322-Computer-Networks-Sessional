@@ -14,6 +14,7 @@ struct sockaddr_in own_address;
 int sockfd;
 int bind_flag;
 socklen_t addrlen;
+char my_ip[ip_size];
 char server_ip[ip_size]="192.168.10.100";
 
 struct Router{
@@ -26,6 +27,9 @@ struct Router{
 		strcpy(ip_addr,ip);
 		cost=c;	
 		up=1;
+		address.sin_family = AF_INET;
+		address.sin_port = htons(4747);
+		address.sin_addr.s_addr = inet_addr(ip_addr);
 		
 		
 
@@ -36,16 +40,13 @@ struct Router{
 
 };
 void setup_own(Router cur){
-	
-	cur.address.sin_family = AF_INET;
-	cur.address.sin_port = htons(4747);
-	cur.address.sin_addr.s_addr = inet_addr(cur.ip_addr);
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	bind_flag = bind(sockfd, (struct sockaddr*) &cur.address, sizeof(sockaddr_in));
 	//printf("Connection stablished\n");
 
 }
+
 
 vector<Router>routers;
 int  inrouter(char *check_ip){
@@ -65,6 +66,9 @@ void show_routing_table(){
 	}
 	printf("\n");
 }
+void send_routing_table();
+void receive_routing_table();
+
 int main(int argc, char *argv[]){
 
 	
@@ -78,6 +82,7 @@ int main(int argc, char *argv[]){
 		printf("Wrong input format.\n Right format : %s <ip address> topo.txt\n", argv[0]);
 		exit(1);
 	}
+	strcpy(my_ip,argv[1]);
 	Router Cur(argv[1],0);
 	Router Server(server_ip,inf);
 	setup_own(Cur);
@@ -153,7 +158,7 @@ int main(int argc, char *argv[]){
 	while(true){
 		
 		bytes_received = recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*) &Server.address, &addrlen);
-		
+		//printf("%s\n",buffer);
 		if(!strncmp("show",buffer,4)){
 		//	printf("%s\n",buffer);
 			int a,b,c,d;
@@ -167,6 +172,9 @@ int main(int argc, char *argv[]){
 			if(!strcmp(Cur.ip_addr,show_ip)){
 				show_routing_table();
 			}
+		}else if(!strncmp("clk",buffer,3)){
+			send_routing_table();
+			receive_routing_table();
 		}
 		
 		//sendto(sockfd, buffer, 1024, 0, (struct sockaddr*) &server_address, sizeof(sockaddr_in));
@@ -179,3 +187,57 @@ int main(int argc, char *argv[]){
 
 }
 
+void send_routing_table(){
+	char mssg[4*bufsz];
+	char join[bufsz]="";
+	strcat(join,"RTable from ");
+	strcat(join,my_ip);
+	strcat(join,"\n");
+	strcat(mssg,join);
+	for(int i=0;i<routers.size();i++){
+
+	 	sprintf(join,"%s %s %d\n",routers[i].ip_addr,routers[i].nexthop_addr,routers[i].cost);
+	 	strcat(mssg,join);
+	}
+	printf("%s\n",mssg);
+	for(int i=0;i<routers.size();i++){
+		if(!strcmp(routers[i].ip_addr,routers[i].nexthop_addr)){
+			sendto(sockfd, mssg, bufsz*4, 0, (struct sockaddr*) &routers[i].address, sizeof(sockaddr_in));
+		}
+	}
+
+}
+void receive_routing_table(){
+	char mssg[bufsz*4];
+	char join[bufsz];
+	int bytes_received;
+	//printf("%s\n",my_ip);
+
+	for(int i=0;i<routers.size();i++){
+		if(!strcmp(routers[i].ip_addr,routers[i].nexthop_addr)){
+			bytes_received = recvfrom(sockfd, mssg, bufsz*4, 0, (struct sockaddr*) &routers[i].address, &addrlen);
+			
+			//printf("From %s\n%s\n",routers[i].ip_addr,mssg);
+			// char *ptr=strtok(mssg,"\n");
+			// int i=0;
+
+			// while(ptr!=NULL){
+				
+			// 	if(i==0 and strncmp(ptr,"RTable from ",12)!=0){
+			// 		break;
+			// 	}
+			// 	if(i==0 and !strncmp(ptr,"RTable from ",12)){
+			// 		sscanf(ptr,"RTable from %s\n",join);
+			// 		printf("%s\n",join);
+			// 	}
+			// 	if(i>0){
+			// 		printf("%s\n",ptr);
+			// 	}
+			// 	i++;
+				
+			// 	ptr=strtok(NULL,"\n");
+			// }
+		}
+	}
+	
+}

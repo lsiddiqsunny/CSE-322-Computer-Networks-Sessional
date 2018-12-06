@@ -16,12 +16,14 @@ int bind_flag;
 socklen_t addrlen;
 char my_ip[ip_size];
 char server_ip[ip_size]="192.168.10.100";
-
+struct sockaddr_in my_address;
+struct sockaddr_in other_address;
 struct Router{
 	char ip_addr[ip_size];
 	char nexthop_addr[ip_size];
 	int cost;
 	struct sockaddr_in address;
+	
 	int up;
 	Router(char *ip,int c){
 		strcpy(ip_addr,ip);
@@ -40,7 +42,7 @@ struct Router{
 
 };
 void setup_own(Router cur){
-
+	
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	bind_flag = bind(sockfd, (struct sockaddr*) &cur.address, sizeof(sockaddr_in));
 	//printf("Connection stablished\n");
@@ -62,12 +64,14 @@ void show_routing_table(){
 	printf("Destination    Next Hop       Cost\n");
 	printf("-----------   -----------  ...........\n");
 	for(int i=0;i<routers.size();i++){
-		printf("%s  %s     %d\n",routers[i].ip_addr,routers[i].nexthop_addr,routers[i].cost);
+		printf("%s  %s 	%d\n",routers[i].ip_addr,routers[i].nexthop_addr,routers[i].cost);
 	}
 	printf("\n");
 }
 void send_routing_table();
 void receive_routing_table();
+int get_id(char *x);
+int get_my_cost(char *x);
 
 int main(int argc, char *argv[]){
 
@@ -135,14 +139,14 @@ int main(int argc, char *argv[]){
 			int x=inrouter(src);
 			if(x==-1){
 				Router new_router(src,inf);
-				strcpy(new_router.nexthop_addr, "  -------   ");
+				strcpy(new_router.nexthop_addr, "------------");
 				new_router.up=0;
 				routers.push_back(new_router);
 			}
 			x=inrouter(dest);
 			if(x==-1){
 				Router new_router(dest,inf);
-				strcpy(new_router.nexthop_addr, "  -------  ");
+				strcpy(new_router.nexthop_addr, "------------");
 				new_router.up=0;
 				routers.push_back(new_router);
 			}
@@ -152,13 +156,21 @@ int main(int argc, char *argv[]){
 	}
 	show_routing_table();
 	fclose(topo);
+	strcpy(buffer,"");
 	
 	
 
 	while(true){
 		
-		bytes_received = recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*) &Server.address, &addrlen);
-		//printf("%s\n",buffer);
+		bytes_received = recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*) &other_address, &addrlen);
+		if(bytes_received<0||strlen(buffer)==bufsz){
+			continue;
+		}
+		//buffer[bytes_received]='\0';
+		//printf("[%s:%d]: %s\n", inet_ntoa(other_address.sin_addr), ntohs(other_address.sin_port), buffer);
+		char current_ip[ip_size]="";
+		strcpy(current_ip,inet_ntoa(other_address.sin_addr));
+		if(!strcmp(current_ip,server_ip)){
 		if(!strncmp("show",buffer,4)){
 		//	printf("%s\n",buffer);
 			int a,b,c,d;
@@ -166,15 +178,96 @@ int main(int argc, char *argv[]){
 			b=(buffer[5]+256)%256;
 			c=(buffer[6]+256)%256;
 			d=(buffer[7]+256)%256;
-			char *show_ip;
+			char show_ip[ip_size];
 			sprintf(show_ip,"%d.%d.%d.%d",a,b,c,d);
-	
+			
 			if(!strcmp(Cur.ip_addr,show_ip)){
 				show_routing_table();
 			}
 		}else if(!strncmp("clk",buffer,3)){
-			send_routing_table();
-			receive_routing_table();
+			 send_routing_table();
+			// receive_routing_table();
+			//printf("here");
+		}
+		}
+		else{
+			if(!strcmp(my_ip,current_ip)){
+				continue;
+			}
+			if(!strncmp("RTable from ",buffer,12)){
+			char join[bufsz];
+			char *ptr=strtok(buffer,"\n");
+			 int i=0;
+			 int my_cost=0;
+
+			 while(ptr!=NULL){
+				
+				//printf("%s\n",ptr);
+			 	if(i==0 and strncmp(ptr,"RTable from ",12)!=0){
+			 		break;
+			 	} 
+			 	if(i==0 and !strncmp(ptr,"RTable from ",12)){
+			 		sscanf(ptr,"RTable from %s\n",join);
+			 		if(strcmp(my_ip,join)==0){
+						 break;
+					 }
+					 my_cost=get_my_cost(join);
+					// printf("%d\n",my_cost);
+			 	}
+			 	if(i>0){
+					 
+					
+					char src[ip_size];
+					char dest[ip_size];
+					int cost;
+					char p[bufsz];
+					int k=0;
+					int j=0;
+					//printf("%s\n",ptr);
+					for(int i=0;i<strlen(ptr);i++){
+						if(ptr[i]==' '){
+							p[k]='\0';
+							k=0;
+							if(j==0){
+								strcpy(src,p);
+
+							}
+							else if(j==1){
+								strcpy(dest,p);
+							}
+							
+							j++;
+
+						}
+						else{
+							p[k]=ptr[i];k++;
+							if(i==strlen(ptr)-1){
+								p[k]='\0';
+								cost=atoi(p);
+							}
+							
+						}
+					}
+					//printf("%s %s %d\n",src,dest,cost);
+					int id=get_id(src);
+					if(id==-1){
+						ptr=strtok(NULL,"\n");
+						continue;
+					}
+					int now_cost=routers[id].cost;
+					if(cost+my_cost<now_cost){
+						routers[id].cost=cost+my_cost;
+						strcpy(routers[id].nexthop_addr,join);
+					}
+					 
+			 	}
+			 	i++;
+				// printf("%d\n",i);
+				
+			 	ptr=strtok(NULL,"\n");
+			 }
+
+			}
 		}
 		
 		//sendto(sockfd, buffer, 1024, 0, (struct sockaddr*) &server_address, sizeof(sockaddr_in));
@@ -186,9 +279,28 @@ int main(int argc, char *argv[]){
 	return 0;
 
 }
-
+int get_my_cost(char *x){
+	for(int i=0;i<routers.size();i++){
+		if(routers[i].match(x)){
+			return routers[i].cost;
+		}
+	}
+	return inf;
+}
+int get_id(char *x){
+	
+	
+	for(int i=0;i<routers.size();i++){
+//printf("%s %s\n",x,routers[i].ip_addr);
+		if(routers[i].match(x)){
+			
+			return i;
+		}
+	}
+	return -1;
+}
 void send_routing_table(){
-	char mssg[4*bufsz];
+	char mssg[bufsz];
 	char join[bufsz]="";
 	strcat(join,"RTable from ");
 	strcat(join,my_ip);
@@ -199,12 +311,13 @@ void send_routing_table(){
 	 	sprintf(join,"%s %s %d\n",routers[i].ip_addr,routers[i].nexthop_addr,routers[i].cost);
 	 	strcat(mssg,join);
 	}
-	printf("%s\n",mssg);
+	//printf("%s\n",mssg);
 	for(int i=0;i<routers.size();i++){
 		if(!strcmp(routers[i].ip_addr,routers[i].nexthop_addr)){
-			sendto(sockfd, mssg, bufsz*4, 0, (struct sockaddr*) &routers[i].address, sizeof(sockaddr_in));
+			sendto(sockfd, mssg, bufsz, 0, (struct sockaddr*) &routers[i].address, sizeof(sockaddr_in));
 		}
 	}
+	strcpy(mssg,"");
 
 }
 void receive_routing_table(){
@@ -215,28 +328,80 @@ void receive_routing_table(){
 
 	for(int i=0;i<routers.size();i++){
 		if(!strcmp(routers[i].ip_addr,routers[i].nexthop_addr)){
-			bytes_received = recvfrom(sockfd, mssg, bufsz*4, 0, (struct sockaddr*) &routers[i].address, &addrlen);
+			bytes_received = recvfrom(sockfd, mssg, bufsz, 0, (struct sockaddr*) &routers[i].address, &addrlen);
 			
 			//printf("From %s\n%s\n",routers[i].ip_addr,mssg);
-			// char *ptr=strtok(mssg,"\n");
-			// int i=0;
+			 char *ptr=strtok(mssg,"\n");
+			 int i=0;
+			 int my_cost=0;
 
-			// while(ptr!=NULL){
+			 while(ptr!=NULL){
 				
-			// 	if(i==0 and strncmp(ptr,"RTable from ",12)!=0){
-			// 		break;
-			// 	}
-			// 	if(i==0 and !strncmp(ptr,"RTable from ",12)){
-			// 		sscanf(ptr,"RTable from %s\n",join);
-			// 		printf("%s\n",join);
-			// 	}
-			// 	if(i>0){
-			// 		printf("%s\n",ptr);
-			// 	}
-			// 	i++;
+				//printf("%s\n",ptr);
+			 	if(i==0 and strncmp(ptr,"RTable from ",12)!=0){
+			 		break;
+			 	} 
+			 	if(i==0 and !strncmp(ptr,"RTable from ",12)){
+			 		sscanf(ptr,"RTable from %s\n",join);
+			 		if(strcmp(my_ip,join)==0){
+						 break;
+					 }
+					 my_cost=get_my_cost(join);
+					// printf("%d\n",my_cost);
+			 	}
+			 	if(i>0){
+					 
+					
+					char src[ip_size];
+					char dest[ip_size];
+					int cost;
+					char p[bufsz];
+					int k=0;
+					int j=0;
+					//printf("%s\n",ptr);
+					for(int i=0;i<strlen(ptr);i++){
+						if(ptr[i]==' '){
+							p[k]='\0';
+							k=0;
+							if(j==0){
+								strcpy(src,p);
+
+							}
+							else if(j==1){
+								strcpy(dest,p);
+							}
+							
+							j++;
+
+						}
+						else{
+							p[k]=ptr[i];k++;
+							if(i==strlen(ptr)-1){
+								p[k]='\0';
+								cost=atoi(p);
+							}
+							
+						}
+					}
+					//printf("%s %s %d\n",src,dest,cost);
+					int id=get_id(src);
+					if(id==-1){
+						ptr=strtok(NULL,"\n");
+						continue;
+					}
+					int now_cost=routers[id].cost;
+					if(cost+my_cost<now_cost){
+						routers[id].cost=cost+my_cost;
+						strcpy(routers[id].nexthop_addr,join);
+					}
+					 
+			 	}
+			 	i++;
+				// printf("%d\n",i);
 				
-			// 	ptr=strtok(NULL,"\n");
-			// }
+			 	ptr=strtok(NULL,"\n");
+			 }
+			 strcpy(mssg,"");
 		}
 	}
 	

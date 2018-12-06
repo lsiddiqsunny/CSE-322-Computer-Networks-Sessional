@@ -13,6 +13,7 @@ using namespace std;
 struct sockaddr_in own_address;
 int sockfd;
 int bind_flag;
+socklen_t addrlen;
 char server_ip[ip_size]="192.168.10.100";
 
 struct Router{
@@ -25,9 +26,7 @@ struct Router{
 		strcpy(ip_addr,ip);
 		cost=c;	
 		up=1;
-		address.sin_family = AF_INET;
-		address.sin_port = htons(4747);
-		address.sin_addr.s_addr = inet_addr(ip);
+		
 		
 
 	}
@@ -38,7 +37,9 @@ struct Router{
 };
 void setup_own(Router cur){
 	
-	
+	cur.address.sin_family = AF_INET;
+	cur.address.sin_port = htons(4747);
+	cur.address.sin_addr.s_addr = inet_addr(cur.ip_addr);
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	bind_flag = bind(sockfd, (struct sockaddr*) &cur.address, sizeof(sockaddr_in));
@@ -62,11 +63,13 @@ void show_routing_table(){
 	for(int i=0;i<routers.size();i++){
 		printf("%s  %s     %d\n",routers[i].ip_addr,routers[i].nexthop_addr,routers[i].cost);
 	}
+	printf("\n");
 }
 int main(int argc, char *argv[]){
 
 	
 	char buffer[bufsz];
+	int bytes_received;
 	FILE *topo;
 	char delim[]=" ";
 	
@@ -102,10 +105,12 @@ int main(int argc, char *argv[]){
 			if(x==-1){
 				Router new_router(dest,cost);
 				strcpy(new_router.nexthop_addr,dest);
+				new_router.up=1;
 				routers.push_back(new_router);
 			}else{
 				routers[x].cost=cost;
 				strcpy(routers[x].nexthop_addr,dest);
+				routers[x].up=1;
 			}
 			
 		}else if(strcmp(argv[1],dest)==0){
@@ -113,10 +118,12 @@ int main(int argc, char *argv[]){
 			if(x==-1){
 				Router new_router(src,cost);
 				strcpy(new_router.nexthop_addr,src);
+				new_router.up=1;
 				routers.push_back(new_router);
 			}else{
 				routers[x].cost=cost;
 				strcpy(routers[x].nexthop_addr,src);
+				routers[x].up=1;
 			}
 
 		}else{
@@ -124,12 +131,14 @@ int main(int argc, char *argv[]){
 			if(x==-1){
 				Router new_router(src,inf);
 				strcpy(new_router.nexthop_addr, "  -------   ");
+				new_router.up=0;
 				routers.push_back(new_router);
 			}
 			x=inrouter(dest);
 			if(x==-1){
 				Router new_router(dest,inf);
 				strcpy(new_router.nexthop_addr, "  -------  ");
+				new_router.up=0;
 				routers.push_back(new_router);
 			}
 
@@ -141,12 +150,28 @@ int main(int argc, char *argv[]){
 	
 	
 
-	/*while(true){
-		gets(buffer);
-		if(!strcmp(buffer, "shutdown")) break;
-		sendto(sockfd, buffer, 1024, 0, (struct sockaddr*) &server_address, sizeof(sockaddr_in));
+	while(true){
+		
+		bytes_received = recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*) &Server.address, &addrlen);
+		
+		if(!strncmp("show",buffer,4)){
+		//	printf("%s\n",buffer);
+			int a,b,c,d;
+			a=(buffer[4]+256)%256;
+			b=(buffer[5]+256)%256;
+			c=(buffer[6]+256)%256;
+			d=(buffer[7]+256)%256;
+			char *show_ip;
+			sprintf(show_ip,"%d.%d.%d.%d",a,b,c,d);
+	
+			if(!strcmp(Cur.ip_addr,show_ip)){
+				show_routing_table();
+			}
+		}
+		
+		//sendto(sockfd, buffer, 1024, 0, (struct sockaddr*) &server_address, sizeof(sockaddr_in));
 	}
-	*/
+	
 
 	close(sockfd);
 

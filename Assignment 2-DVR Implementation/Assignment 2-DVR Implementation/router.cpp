@@ -255,7 +255,7 @@ int main(int argc, char *argv[]){
 			
 			printf("%s packet forwarded to %s\n",mssg,routers[id].ip_addr);
 			char new_mssg[bufsz];
-			sprintf(new_mssg,"frwd %s %d %s",iptwo,now_cost,mssg);
+			sprintf(new_mssg,"frwd %s %d %s (printed by %s)",iptwo,now_cost,mssg,my_ip);
 			//printf("%s\n",new_mssg);
 			sendto(sockfd, new_mssg, bufsz, 0, (struct sockaddr*) &routers[id].address, sizeof(sockaddr_in));
 		}
@@ -368,7 +368,7 @@ int main(int argc, char *argv[]){
 					 }
 					 my_cost=get_my_cost(join);
 					 if(get_id(join)!=-1)
-					 neigh[get_id(join)].mssgco++;
+					 neigh[get_id(join)].mssgco=totalmssg;
 
 					// printf("%s %d\n",join,neigh[get_id(join)].mssgco);
 			 	}
@@ -463,7 +463,7 @@ int main(int argc, char *argv[]){
 				id=get_id_router(routers[id].nexthop_addr);
 				char new_mssg[bufsz];
 				sprintf(new_mssg,"frwd %s %d %s",next_ip,cost,mssg);
-				printf("%s packet forwarded to %s\n",mssg,routers[id].ip_addr);
+				printf("%s packet forwarded to %s (printed by %s)\n",mssg,routers[id].ip_addr,my_ip);
 				sendto(sockfd, new_mssg, bufsz, 0, (struct sockaddr*) &routers[id].address, sizeof(sockaddr_in));
 
 
@@ -515,11 +515,12 @@ void updown_link(int now){
 	
 
 	for(int i=0;i<neigh.size();i++){
-		if(routers[i].up==0){
+		//printf("%s %d\n",neigh[i].ip_addr,neigh[i].cost);
+		if(neigh[i].up==0){
 			if(neigh[i].mssgco>0){
 				neigh[i].up=1;
 				neigh[i].mssgco=now;
-				printf("%s %d\n",neigh[i].ip_addr,neigh[i].cost);
+				
 				for(int j=0;j<routers.size();j++){
 				if(!strcmp(routers[j].ip_addr,neigh[i].ip_addr)){
 					routers[j].cost=neigh[i].cost;

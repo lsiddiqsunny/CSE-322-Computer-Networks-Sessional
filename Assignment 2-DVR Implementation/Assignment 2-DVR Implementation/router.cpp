@@ -189,6 +189,71 @@ int main(int argc, char *argv[]){
 			// receive_routing_table();
 			//printf("here");
 		}
+		else if(!strncmp("cost",buffer,4)){
+			// for(int i=0;i<strlen(buffer);i++){
+			// 	printf("%d ",buffer[i]);
+			// }
+			//printf("\n");
+			 int ip1[4];
+			 for(int i=4;i<=7;i++){
+				ip1[i-4]=(buffer[i]+256)%256;
+			 }
+			 
+			 char ipone[ip_size];
+			 sprintf(ipone,"%d.%d.%d.%d",ip1[0],ip1[1],ip1[2],ip1[3]);
+			 int ip2[4];
+			 for(int i=8;i<=11;i++){
+				ip2[i-8]=(buffer[i]+256)%256;
+			 }
+			 
+			 char iptwo[ip_size];
+			 sprintf(iptwo,"%d.%d.%d.%d",ip2[0],ip2[1],ip2[2],ip2[3]);
+			 int cost[4];
+			 int k=0;
+			 for(int i=12;i<=13;i++){
+				cost[i-12]=(int)buffer[i];
+				k++;
+			 }
+			 
+			// printf("%s %s \n",ipone,iptwo);
+			int now_cost=0;
+			 for(int i=0;i<k;i++){
+				 if(i==0){
+					 if(cost[i]<0){
+						 cost[i]+=256;
+					 }
+					 now_cost+=cost[i];
+				 }
+				 else{
+					  if(cost[i]<0){
+						 cost[i]+=256;
+					 }
+					  now_cost+=(256*cost[i]);
+
+				 }
+			 }
+			if(!strcmp(ipone,my_ip)){
+				int id=get_id(iptwo);
+				if(id==-1){
+					continue;
+				}
+				routers[id].cost=now_cost;
+			}
+			else if(!strcmp(iptwo,my_ip)){
+				int id=get_id(ipone);
+				if(id==-1){
+					continue;
+				}
+				routers[id].cost=now_cost;
+			}
+			 
+			// printf("%d %d\n",cost[0],cost[1]);
+			// int value=atoi(cost);
+			// printf("%d\n",value);
+
+			 
+			 
+		}
 		}
 		else{
 			if(!strcmp(my_ip,current_ip)){

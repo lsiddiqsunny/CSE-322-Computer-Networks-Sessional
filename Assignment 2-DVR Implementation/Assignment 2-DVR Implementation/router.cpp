@@ -201,6 +201,64 @@ int main(int argc, char *argv[]){
 			// receive_routing_table();
 			//printf("here");
 		}
+		else if(!strncmp("send",buffer,4)){
+			int ip1[4];
+			 for(int i=4;i<=7;i++){
+				ip1[i-4]=(buffer[i]+256)%256;
+			 }
+			 
+			 char ipone[ip_size];
+			 sprintf(ipone,"%d.%d.%d.%d",ip1[0],ip1[1],ip1[2],ip1[3]);
+			 int ip2[4];
+			 for(int i=8;i<=11;i++){
+				ip2[i-8]=(buffer[i]+256)%256;
+			 }
+			 
+			 char iptwo[ip_size];
+			 sprintf(iptwo,"%d.%d.%d.%d",ip2[0],ip2[1],ip2[2],ip2[3]);
+			 int cost[4];
+			 int k=0;
+			 for(int i=12;i<=13;i++){
+				cost[i-12]=(int)buffer[i];
+				k++;
+			 }
+			 int now_cost=0;
+			 for(int i=0;i<k;i++){
+				 if(i==0){
+					 if(cost[i]<0){
+						 cost[i]+=256;
+					 }
+					 now_cost+=cost[i];
+				 }
+				 else{
+					  if(cost[i]<0){
+						 cost[i]+=256;
+					 }
+					  now_cost+=(256*cost[i]);
+
+				 }
+			 }
+			 char mssg[now_cost+1];
+			 for(int i=14;i<14+now_cost;i++){
+				 mssg[i-14]=buffer[i];
+				 if(i==(14+now_cost-1)){
+					 mssg[i-14+1]='\0';
+				 }
+			 }
+
+			 if(strcmp(my_ip,ipone)!=0){
+				 continue;
+			 }
+			 int id=get_id_router(iptwo);
+			
+			id=get_id_router(routers[id].nexthop_addr);
+			
+			printf("%s packet forwarded to %s\n",mssg,routers[id].ip_addr);
+			char new_mssg[bufsz];
+			sprintf(new_mssg,"frwd %s %d %s",iptwo,now_cost,mssg);
+			//printf("%s\n",new_mssg);
+			sendto(sockfd, new_mssg, bufsz, 0, (struct sockaddr*) &routers[id].address, sizeof(sockaddr_in));
+		}
 		else if(!strncmp("cost",buffer,4)){
 			// for(int i=0;i<strlen(buffer);i++){
 			// 	printf("%d ",buffer[i]);
@@ -251,12 +309,13 @@ int main(int argc, char *argv[]){
 					continue;
 				}
 				neigh[id].cost=now_cost;
+				//printf("%s %d\n",neigh[id].ip_addr,neigh[id].cost);
 				int ano_id=get_id_router(iptwo);
 				if(ano_id!=-1){
-					if(neigh[id].cost<routers[ano_id].cost){
+					
 						routers[ano_id].cost=neigh[id].cost;
 						strcpy(routers[ano_id].nexthop_addr,iptwo);
-					}
+					
 				}
 
 			//	printf("%s\n",neigh[id].ip_addr);
@@ -266,15 +325,14 @@ int main(int argc, char *argv[]){
 				if(id==-1){
 					continue;
 				}
-				//printf("%s\n",neigh[id].ip_addr);
+				
 
 				neigh[id].cost=now_cost;
-				int ano_id=get_id_router(ipone);
+				int ano_id=get_id_router(ipone);//printf("%s %d\n",neigh[id].ip_addr,neigh[id].cost);
 				if(ano_id!=-1){
-					if(neigh[id].cost<routers[ano_id].cost){
 						routers[ano_id].cost=neigh[id].cost;
 						strcpy(routers[ano_id].nexthop_addr,ipone);
-					}
+					
 				}
 			}
 
@@ -362,9 +420,13 @@ int main(int argc, char *argv[]){
 					int now_cost=routers[id].cost;
 					//printf("%s %d\n",routers[id].ip_addr,now_cost);
 					if(cost+my_cost<now_cost){
+						//printf("%s %s %d\n",src,dest,cost);
 						routers[id].cost=cost+my_cost;
 						strcpy(routers[id].nexthop_addr,join);
 						//printf("%s\n",join);
+					}
+					else if(!strcmp(routers[id].nexthop_addr,join)){
+						routers[id].cost=cost+my_cost;
 					}
 					 
 			 	}
@@ -373,6 +435,37 @@ int main(int argc, char *argv[]){
 				
 			 	ptr=strtok(NULL,"\n");
 			 }
+			 for(int i=0;i<neigh.size();i++){
+				 int id=get_id_router(neigh[i].ip_addr);
+				 if(!strcmp(routers[id].ip_addr,routers[id].nexthop_addr)){
+					 continue;
+				 }
+				 char realhop[ip_size];
+				 strcpy(realhop,routers[id].nexthop_addr);
+				 for(int j=0;j<routers.size();j++){
+					 if(!strcmp(routers[j].nexthop_addr,neigh[i].ip_addr)){
+						 strcpy(routers[j].nexthop_addr,realhop);
+					 }
+				 }
+			 }
+
+			}else if(!strncmp("frwd",buffer,4)){
+				char next_ip[ip_size];
+				int cost;
+				char mssg[bufsz];
+				sscanf(buffer,"frwd %s %d %s",next_ip,&cost,mssg);
+				//printf("%s %d %s\n",next_ip,cost,mssg);
+				if(!strcmp(next_ip,my_ip)){
+					printf("%s packet reached destination\n",mssg);
+					continue;
+				}
+				int id=get_id_router(next_ip);
+				id=get_id_router(routers[id].nexthop_addr);
+				char new_mssg[bufsz];
+				sprintf(new_mssg,"frwd %s %d %s",next_ip,cost,mssg);
+				printf("%s packet forwarded to %s\n",mssg,routers[id].ip_addr);
+				sendto(sockfd, new_mssg, bufsz, 0, (struct sockaddr*) &routers[id].address, sizeof(sockaddr_in));
+
 
 			}
 		}
@@ -426,6 +519,7 @@ void updown_link(int now){
 			if(neigh[i].mssgco>0){
 				neigh[i].up=1;
 				neigh[i].mssgco=now;
+				printf("%s %d\n",neigh[i].ip_addr,neigh[i].cost);
 				for(int j=0;j<routers.size();j++){
 				if(!strcmp(routers[j].ip_addr,neigh[i].ip_addr)){
 					routers[j].cost=neigh[i].cost;
@@ -537,7 +631,7 @@ void receive_routing_table(){
 							
 						}
 					}
-					//printf("%s %s %d\n",src,dest,cost);
+					//
 					int id=get_id(src);
 					if(id==-1){
 						ptr=strtok(NULL,"\n");
@@ -545,8 +639,9 @@ void receive_routing_table(){
 					}
 					int now_cost=routers[id].cost;
 					if(cost+my_cost<now_cost){
+						printf("%s %s %d\n",src,dest,cost);
 						routers[id].cost=cost+my_cost;
-						strcpy(routers[id].nexthop_addr,join);
+						strcpy(routers[id].nexthop_addr,src);
 					}
 					 
 			 	}

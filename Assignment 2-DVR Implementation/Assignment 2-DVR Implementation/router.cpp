@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
-#include <unistd.h>
+#include <arpa/inet.h> //for networking
+#include <sys/socket.h> // for socket communication
+#include <unistd.h> //for unix operating system
 
 #define ip_size 36
 #define bufsz 1024
@@ -13,11 +13,14 @@ using namespace std;
 struct sockaddr_in own_address;
 int sockfd;
 int bind_flag;
+
 socklen_t addrlen;
+
 char my_ip[ip_size];
 char server_ip[ip_size]="192.168.10.100";
 struct sockaddr_in my_address;
 struct sockaddr_in other_address;
+
 struct Router{
 	char ip_addr[ip_size];
 	char nexthop_addr[ip_size];
@@ -43,6 +46,7 @@ struct Router{
 	}
 
 };
+
 void setup_own(Router cur){
 	
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -57,6 +61,7 @@ void setup_own(Router cur){
 
 
 vector<Router>routers,neigh;
+
 int  inrouter(char *check_ip){
 	for(int i=0;i<routers.size();i++){
 		if(routers[i].match(check_ip)){
@@ -66,6 +71,7 @@ int  inrouter(char *check_ip){
 	return -1;
 
 }
+
 void show_routing_table(){
 	printf("Destination    Next Hop       Cost\n");
 	printf("-----------   -----------  ...........\n");
@@ -75,12 +81,13 @@ void show_routing_table(){
 	}
 	printf("\n");
 }
+
 void send_routing_table();
-void receive_routing_table();
 int get_id(char *x);
 int get_id_router(char *x);
 int get_my_cost(char *x);
 void updown_link(int now);
+
 int main(int argc, char *argv[]){
 
 	
@@ -177,7 +184,7 @@ int main(int argc, char *argv[]){
 	while(true){
 		
 		bytes_received = recvfrom(sockfd, buffer, 1024, 0, (struct sockaddr*) &other_address, &addrlen);
-		if(bytes_received<0||strlen(buffer)==bufsz){
+		if(bytes_received<0){
 			continue;
 		}
 		//buffer[bytes_received]='\0';
@@ -483,6 +490,7 @@ int main(int argc, char *argv[]){
 	return 0;
 
 }
+
 int get_my_cost(char *x){
 	for(int i=0;i<routers.size();i++){
 		if(routers[i].match(x)){
@@ -491,6 +499,7 @@ int get_my_cost(char *x){
 	}
 	return inf;
 }
+
 int get_id(char *x){
 	
 	
@@ -503,6 +512,7 @@ int get_id(char *x){
 	}
 	return -1;
 }
+
 int get_id_router(char *x){
 	
 	
@@ -568,95 +578,10 @@ void send_routing_table(){
 	}
 	//printf("%s\n",mssg);
 	for(int i=0;i<neigh.size();i++){
+			if(neigh[i].up)
 			sendto(sockfd, mssg, bufsz, 0, (struct sockaddr*) &neigh[i].address, sizeof(sockaddr_in));
 		
 	}
 	strcpy(mssg,"");
 
-}
-void receive_routing_table(){
-	char mssg[bufsz*4];
-	char join[bufsz];
-	int bytes_received;
-	//printf("%s\n",my_ip);
-
-	for(int num=0;num<neigh.size();num++){
-			bytes_received = recvfrom(sockfd, mssg, bufsz, 0, (struct sockaddr*) &neigh[num].address, &addrlen);
-			
-			//printf("From %s\n%s\n",routers[i].ip_addr,mssg);
-			 char *ptr=strtok(mssg,"\n");
-			 int i=0;
-			 int my_cost=0;
-
-			 while(ptr!=NULL){
-				
-				//printf("%s\n",ptr);
-			 	if(i==0 and strncmp(ptr,"RTable from ",12)!=0){
-			 		break;
-			 	} 
-			 	if(i==0 and !strncmp(ptr,"RTable from ",12)){
-			 		sscanf(ptr,"RTable from %s\n",join);
-			 		if(strcmp(my_ip,join)==0){
-						 break;
-					 }
-					 my_cost=get_my_cost(join);
-					// printf("%d\n",my_cost);
-			 	}
-			 	if(i>0){
-					 
-					
-					char src[ip_size];
-					char dest[ip_size];
-					int cost;
-					char p[bufsz];
-					int k=0;
-					int j=0;
-					//printf("%s\n",ptr);
-					for(int i=0;i<strlen(ptr);i++){
-						if(ptr[i]==' '){
-							p[k]='\0';
-							k=0;
-							if(j==0){
-								strcpy(src,p);
-
-							}
-							else if(j==1){
-								strcpy(dest,p);
-							}
-							
-							j++;
-
-						}
-						else{
-							p[k]=ptr[i];k++;
-							if(i==strlen(ptr)-1){
-								p[k]='\0';
-								cost=atoi(p);
-							}
-							
-						}
-					}
-					//
-					int id=get_id(src);
-					if(id==-1){
-						ptr=strtok(NULL,"\n");
-						continue;
-					}
-					int now_cost=routers[id].cost;
-					if(cost+my_cost<now_cost){
-						printf("%s %s %d\n",src,dest,cost);
-						routers[id].cost=cost+my_cost;
-						strcpy(routers[id].nexthop_addr,src);
-					}
-					 
-			 	}
-			 	i++;
-				// printf("%d\n",i);
-				
-			 	ptr=strtok(NULL,"\n");
-			 }
-			 strcpy(mssg,"");
-		
-	}
-	
 }

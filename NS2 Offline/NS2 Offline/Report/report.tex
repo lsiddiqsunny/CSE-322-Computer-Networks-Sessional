@@ -1,0 +1,138 @@
+\documentclass[hidelinks,12pt]{report}
+
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{hyperref}
+\usepackage{listings}
+
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        
+        \Large
+         CSE 322 ASSIGNMENT 3\\
+         Network Simulator 2  \\
+         How to Configure and Work with NS2\\
+        \normalsize
+        \vspace{1.5cm}
+        Mohammed Latif Siddiq\\
+        Student ID : 1505069
+        
+        \vfill
+        
+        \vspace{0.8cm}
+        
+        \includegraphics[width=0.2\textwidth]{buet_logo.png}
+        
+        \Large
+        Department of Computer Science and Engineering\\
+       Bangladesh University of Engineering and Technology\\
+      (BUET)\\
+      Dhaka 1000\\
+       \today
+        
+    \end{center}
+\end{titlepage}
+
+\newpage
+
+\tableofcontents
+\chapter{Install NS2}
+\textbf{NS2} is an open-source simulation tool that runs on Linux. It is a discreet event simulator targeted at networking research and provides substantial support for simulation of routing, multicast protocols and IP protocols, such as \textbf{UDP}, \textbf{TCP}, \textbf{RTP} and \textbf{SRM} over wired and wireless (local and satellite) networks.
+\section{Download NS2}
+In the very beginning step,you have to download the \textbf{ns-allinone-2.35} packeage.
+You can download it from here : \href{https://sourceforge.net/projects/nsnam/}{\textbf{NS2 Download}}
+
+The current version is 2.35.The downloaded file name should be : \textbf{ns-allinone-2.35.tar.gz}
+\section{Install Required Dependencies}
+NS2 requires gcc compiler,tcl,xgraph,make software.
+Try following bash command one by one:
+\begin{lstlisting}[language=bash]
+  $ sudo apt-get update
+  $ sudo apt-get dist-upgrade
+  $ sudo apt-get update
+  $ sudo apt-get gcc
+  $ sudo apt-get install build-essential autoconf automake
+  $ sudo apt-get install tcl8.5-dev tk8.5-dev
+  $ sudo apt-get install perl xgraph libx11-dev libxmu-dev
+\end{lstlisting}
+These command will install all necessary software.
+\section{Install Main Software}
+Move to file where you downlaod \textbf{ns-allinone-2.35.tar.gz}.
+Then try following bash command:
+\begin{lstlisting}[language=bash]
+  $ tar -zxvf ns-allinone-2.35.tar.gz
+  $ cd ns-allinone-2.35
+  $ ./install
+\end{lstlisting}
+You may get this error:
+\begin{lstlisting}[language=bash]
+linkstate/ls.h: In instantiation of ‘void LsMap<Key, T>::eraseAll() [with Key = int; T = LsIdSeq]’:
+linkstate/ls.cc:396:28:   required from here
+linkstate/ls.h:137:58: error: ‘erase’ was not declared in this scope, and no declarations were found by argument-dependent lookup at the point of instantiation [-fpermissive]
+  void eraseAll() { erase(baseMap::begin(), baseMap::end()); }
+\end{lstlisting}
+In this case,you have to edit \textbf{ls.h} file.After running above command,we should find a folder named \textbf{ns-allinone-2.35}.In this folder,we can find a folder \textbf{ns-2.35}.In that folder,there is a folder named \textbf{linkstate}.You should find a  file \textbf{ls.h} and edit line number 137.
+
+From 
+\begin{lstlisting}[language=c]
+  void eraseAll() { erase(baseMap::begin(), baseMap::end()); }
+\end{lstlisting}
+To
+\begin{lstlisting}[language=c]
+    void eraseAll() {baseMap::erase(baseMap::begin(), baseMap::end()); }
+\end{lstlisting}
+Then give this command again:
+\begin{lstlisting}[language=bash]
+  $ ./install
+\end{lstlisting}
+
+This time,ns2 will be installed without any error.
+
+Now give this command in the terminal
+\begin{lstlisting}[language=bash]
+  $ gedit ~/.bashrc 
+\end{lstlisting}
+After openning bashrc file,add this line in the file after the third line:(Remember,my ns-allinone-2.35 folder is in home directory.So all path should be changed according to the destination of your folder.)
+\begin{lstlisting}[language=bash]
+#LD_LIBRARY_PATH
+OTCL_LIB=~/ns-allinone-2.35/otcl-1.14
+NS2_LIB=~/ns-allinone-2.35/lib
+X11_LIB=/usr/X11R6/lib
+USR_LOCAL_LIB=/usr/local/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OTCL_LIB:$NS2_LIB:$X11_LIB:$USR_LOCAL_LIB
+
+ # TCL_LIBRARY
+ TCL_LIB=~/ns-allinone-2.35/tcl8.5.10/library
+ USR_LIB=/usr/lib
+ export TCL_LIBRARY=$TCL_LIB:$USR_LIB
+
+ # PATH
+ XGRAPH=~/ns-allinone-2.35/bin:~/ns-allinone-2.35/tcl8.5.10/unix:~//ns-allinone-2.35/tk8.5.10/unix
+ NS=~/ns-allinone-2.35/ns-2.35/
+ NAM=~/ns-allinone-2.35/nam-1.15/
+ PATH=$PATH:$XGRAPH:$NS:$NAM
+\end{lstlisting}
+Save the file and close it.
+
+Give the following command in terminal:
+\begin{lstlisting}[language=bash]
+  $ source ~/.bashrc 
+  $ ns
+\end{lstlisting}
+If you get \% sign,ns2 is successfully installed.
+
+You can check the validity,by typing the following command:(assuming that the terminal is opend in ns-allinone-2.35/ns-2.35)
+\begin{lstlisting}[language=bash]
+  $ ./validate
+\end{lstlisting}
+It may take about 30 minutes and find that some tests fail.In that case,try this command:
+\begin{lstlisting}[language=bash]
+  $ sudo apt-get install libx11-dev xorg-dev libxmu-dev libperl4-corelibs-perl
+\end{lstlisting}
+It will install missing packege.
+\chapter{Running Sample File}
+\end{document}

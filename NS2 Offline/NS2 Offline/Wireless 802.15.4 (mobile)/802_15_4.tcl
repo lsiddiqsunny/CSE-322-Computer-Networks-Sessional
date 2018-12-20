@@ -152,33 +152,18 @@ create-god $val(nn)
 puts "start node creation"			 
 for {set i 0} {$i < $val(nn) } {incr i} {
 	set node_($i) [$ns_ node]	
-#	$node_($i) random-motion 0		;# disable random motion
-}
+	$node_($i) random-motion 0		;# disable random motion
 #
 # Provide initial (X,Y, for now Z=0) co-ordinates for mobilenodes
 #
-#puts "GRID topology"
-set x_start [expr $x_dim/($num_col*2)];
-set y_start [expr $y_dim/($num_row*2)];
-set i 0;
-while {$i < $num_row } {
-#in same column
-    for {set j 0} {$j < $num_col } {incr j} {
-#in same row
-	set m [expr $i*$num_col+$j];
-
-	set x_pos [expr $x_start+$j*($x_dim/$num_col)];#grid settings
-	set y_pos [expr $y_start+$i*($y_dim/$num_row)];#grid settings
-
-	$node_($m) set X_ $x_pos;
-	$node_($m) set Y_ $y_pos;
-	$node_($m) set Z_ 0.0
-#	puts "$m"
-	puts -nonewline $topofile "$m x: [$node_($m) set X_] y: [$node_($m) set Y_] \n"
-    }
-    incr i;
-}; 
-
+	set x_pos [expr int($x_dim*rand())] ;#random settings
+	set y_pos [expr int($y_dim*rand())] ;#random settings
+	$node_($i) set X_ $x_pos;
+	$node_($i) set Y_ $y_pos;
+	$node_($i) set Z_ 0.0
+	puts -nonewline $topofile "$i x: [$node_($i) set X_] y: [$node_($i) set Y_] \n"
+}
+#puts "RANDOM topology"
 puts "node creation complete"
 for {set i 0} {$i < $val(nn)} { incr i } {
 	$ns_ initial_node_pos $node_($i) 4

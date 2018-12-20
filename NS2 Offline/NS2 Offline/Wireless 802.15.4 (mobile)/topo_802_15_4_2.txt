@@ -1,0 +1,157 @@
+0 x: 25 y: 31 
+1 x: 75 y: 31 
+2 x: 125 y: 31 
+3 x: 175 y: 31 
+4 x: 225 y: 31 
+5 x: 275 y: 31 
+6 x: 325 y: 31 
+7 x: 375 y: 31 
+8 x: 425 y: 31 
+9 x: 475 y: 31 
+10 x: 25 y: 93 
+11 x: 75 y: 93 
+12 x: 125 y: 93 
+13 x: 175 y: 93 
+14 x: 225 y: 93 
+15 x: 275 y: 93 
+16 x: 325 y: 93 
+17 x: 375 y: 93 
+18 x: 425 y: 93 
+19 x: 475 y: 93 
+20 x: 25 y: 155 
+21 x: 75 y: 155 
+22 x: 125 y: 155 
+23 x: 175 y: 155 
+24 x: 225 y: 155 
+25 x: 275 y: 155 
+26 x: 325 y: 155 
+27 x: 375 y: 155 
+28 x: 425 y: 155 
+29 x: 475 y: 155 
+30 x: 25 y: 217 
+31 x: 75 y: 217 
+32 x: 125 y: 217 
+33 x: 175 y: 217 
+34 x: 225 y: 217 
+35 x: 275 y: 217 
+36 x: 325 y: 217 
+37 x: 375 y: 217 
+38 x: 425 y: 217 
+39 x: 475 y: 217 
+40 x: 25 y: 279 
+41 x: 75 y: 279 
+42 x: 125 y: 279 
+43 x: 175 y: 279 
+44 x: 225 y: 279 
+45 x: 275 y: 279 
+46 x: 325 y: 279 
+47 x: 375 y: 279 
+48 x: 425 y: 279 
+49 x: 475 y: 279 
+50 x: 25 y: 341 
+51 x: 75 y: 341 
+52 x: 125 y: 341 
+53 x: 175 y: 341 
+54 x: 225 y: 341 
+55 x: 275 y: 341 
+56 x: 325 y: 341 
+57 x: 375 y: 341 
+58 x: 425 y: 341 
+59 x: 475 y: 341 
+60 x: 25 y: 403 
+61 x: 75 y: 403 
+62 x: 125 y: 403 
+63 x: 175 y: 403 
+64 x: 225 y: 403 
+65 x: 275 y: 403 
+66 x: 325 y: 403 
+67 x: 375 y: 403 
+68 x: 425 y: 403 
+69 x: 475 y: 403 
+70 x: 25 y: 465 
+71 x: 75 y: 465 
+72 x: 125 y: 465 
+73 x: 175 y: 465 
+74 x: 225 y: 465 
+75 x: 275 y: 465 
+76 x: 325 y: 465 
+77 x: 375 y: 465 
+78 x: 425 y: 465 
+79 x: 475 y: 465 
+1 Changed position: 61 x: 302 y: 193 
+2 Changed position: 45 x: 334 y: 306 
+3 Changed position: 35 x: 310 y: 396 
+4 Changed position: 79 x: 184 y: 257 
+5 Changed position: 14 x: 219 y: 81 
+6 Changed position: 14 x: 252 y: 204 
+7 Changed position: 60 x: 62 y: 422 
+8 Changed position: 78 x: 434 y: 377 
+9 Changed position: 74 x: 210 y: 406 
+10 Changed position: 35 x: 151 y: 469 
+11 Changed position: 68 x: 234 y: 482 
+12 Changed position: 60 x: 433 y: 89 
+13 Changed position: 46 x: 330 y: 378 
+14 Changed position: 25 x: 307 y: 9 
+15 Changed position: 61 x: 419 y: 462 
+16 Changed position: 26 x: 13 y: 33 
+17 Changed position: 76 x: 12 y: 438 
+18 Changed position: 10 x: 161 y: 30 
+19 Changed position: 38 x: 417 y: 251 
+20 Changed position: 61 x: 117 y: 257 
+21 Changed position: 52 x: 430 y: 46 
+22 Changed position: 10 x: 291 y: 142 
+23 Changed position: 2 x: 442 y: 367 
+24 Changed position: 44 x: 474 y: 375 
+25 Changed position: 45 x: 347 y: 36 
+26 Changed position: 9 x: 45 y: 345 
+27 Changed position: 55 x: 199 y: 386 
+28 Changed position: 56 x: 301 y: 415 
+29 Changed position: 8 x: 247 y: 43 
+30 Changed position: 73 x: 18 y: 285 
+31 Changed position: 0 x: 382 y: 383 
+32 Changed position: 42 x: 420 y: 219 
+33 Changed position: 20 x: 136 y: 248 
+34 Changed position: 55 x: 164 y: 333 
+35 Changed position: 74 x: 5 y: 497 
+36 Changed position: 73 x: 436 y: 32 
+37 Changed position: 10 x: 201 y: 261 
+RANDOM:  Src: 14 Dest: 38
+RANDOM:  Src: 50 Dest: 11
+RANDOM:  Src: 20 Dest: 71
+RANDOM:  Src: 55 Dest: 5
+RANDOM:  Src: 67 Dest: 51
+RANDOM:  Src: 56 Dest: 70
+RANDOM:  Src: 20 Dest: 55
+RANDOM:  Src: 56 Dest: 23
+RANDOM:  Src: 15 Dest: 72
+RANDOM:  Src: 52 Dest: 39
+RANDOM:  Src: 16 Dest: 15
+RANDOM:  Src: 68 Dest: 50
+RANDOM:  Src: 6 Dest: 13
+RANDOM:  Src: 4 Dest: 33
+RANDOM:  Src: 30 Dest: 62
+RANDOM:  Src: 75 Dest: 73
+RANDOM:  Src: 47 Dest: 32
+RANDOM:  Src: 70 Dest: 9
+RANDOM:  Src: 21 Dest: 35
+RANDOM:  Src: 47 Dest: 14
+RANDOM:  Src: 23 Dest: 55
+RANDOM:  Src: 40 Dest: 17
+RANDOM:  Src: 61 Dest: 9
+RANDOM:  Src: 69 Dest: 31
+RANDOM:  Src: 75 Dest: 13
+RANDOM:  Src: 16 Dest: 8
+RANDOM:  Src: 7 Dest: 8
+RANDOM:  Src: 5 Dest: 30
+RANDOM:  Src: 61 Dest: 75
+RANDOM:  Src: 5 Dest: 52
+RANDOM:  Src: 70 Dest: 68
+RANDOM:  Src: 45 Dest: 57
+RANDOM:  Src: 5 Dest: 51
+RANDOM:  Src: 72 Dest: 63
+RANDOM:  Src: 73 Dest: 29
+RANDOM:  Src: 24 Dest: 28
+RANDOM:  Src: 69 Dest: 10
+RANDOM:  Src: 23 Dest: 17
+RANDOM:  Src: 62 Dest: 21
+RANDOM:  Src: 33 Dest: 49

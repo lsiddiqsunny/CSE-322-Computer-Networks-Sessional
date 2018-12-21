@@ -26,10 +26,10 @@ do
 echo "                             EXECUTING $(($i+1)) th ITERATION"
 read node
 read flow
-read speed
+read Tx_Range
 read packet
 
-ns 802_11_udp.tcl $node $flow $packet $speed $(($i+1))
+ns 802_11_udp.tcl $node $flow $packet $Tx_Range $(($i+1))
 echo "SIMULATION COMPLETE. BUILDING STAT......"
 awk -f 802_11_udp.awk 802_11_udp.tr > "$output_file_format$under$i.out"
 while read val

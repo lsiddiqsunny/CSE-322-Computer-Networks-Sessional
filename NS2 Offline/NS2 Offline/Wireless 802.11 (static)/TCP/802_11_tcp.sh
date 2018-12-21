@@ -28,9 +28,9 @@ do
 echo "                             EXECUTING $(($i+1)) th ITERATION"
 read node
 read flow
-read speed
+read Tx_Range
 read packet
-ns 802_11_tcp.tcl $node $flow $speed $node $(($i+1))
+ns 802_11_tcp.tcl $node $flow $packet $Tx_Range  $(($i+1))
 echo "SIMULATION COMPLETE. BUILDING STAT......"
 
 

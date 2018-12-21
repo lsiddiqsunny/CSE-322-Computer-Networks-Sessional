@@ -16,7 +16,7 @@ set factor [lindex $argv 4]
 set num_node  [lindex $argv 0];# [expr 20*$factor]
 set num_flow  [lindex $argv 1];# [expr 10*$factor]
 set cbr_pckt_per_sec  [lindex $argv 2]; # [expr 100*$factor]
-set speed     [lindex $argv 3];# [expr 5*$factor]
+set Tx_Range   [lindex $argv 3];# [expr 5*$factor]
 set cbr_interval [expr 1.0/$cbr_pckt_per_sec] ;# ?????? 1 for 1 packets per second and 0.1 for 10 packets per second
 set num_motion [expr int($num_node*rand()/2)]
 set udp_src Agent/UDP
@@ -44,7 +44,7 @@ set val(initialenergy_11)  1000            ;# Initial energy in Joules
 
 set val(idlepower_11) 869.4e-3			;#LEAP (802.11g) 
 set val(rxpower_11) 1560.6e-3			;#LEAP (802.11g)
-set val(txpower_11) 1679.4e-3			;#LEAP (802.11g)
+set val(txpower_11) [expr $Tx_Range*1679.4e-3]	;#LEAP (802.11g)
 set val(sleeppower_11) 37.8e-3			;#LEAP (802.11g)
 set val(transitionpower_11) 176.695e-3		;#LEAP (802.11g)	??????????????????????????????/
 set val(transitiontime_11) 2.36			;#LEAP (802.11g)

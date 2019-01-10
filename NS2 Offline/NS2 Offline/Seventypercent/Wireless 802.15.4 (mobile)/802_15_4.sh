@@ -1,7 +1,7 @@
+
 #INPUT: output file AND number of iterations
 output_file_format="802_15_4";
 under="_";
-
 
 read iteration
 iteration_float=$iteration
@@ -24,9 +24,9 @@ do
 echo "                             EXECUTING $(($i+1)) th ITERATION"
 read node
 read flow
-read speed
+read Tx_Range
 read packet
-ns 802_15_4.tcl $node $flow $speed $node $(($i+1))
+ns 802_15_4.tcl $node $flow $packet $Tx_Range  $(($i+1))
 echo "SIMULATION COMPLETE. BUILDING STAT......"
 
 

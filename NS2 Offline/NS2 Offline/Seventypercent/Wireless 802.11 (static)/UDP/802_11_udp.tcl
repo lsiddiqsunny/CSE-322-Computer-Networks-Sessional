@@ -34,7 +34,7 @@ set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set val(ifqlen)         50                         ;# max packet in ifq
 set val(nn)             $num_node                  ;# number of mobilenodes
-set val(rp)             DSDV                       ;# routing protocol
+set val(rp)             AODV                       ;# routing protocol
 
 # ======================================================================
 # Energy Parameters

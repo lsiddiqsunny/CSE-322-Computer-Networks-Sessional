@@ -21,6 +21,7 @@ set cbr_interval [expr 1.0/$cbr_pckt_per_sec] ;# ?????? 1 for 1 packets per seco
 set num_motion [expr int($num_node*rand()/2)]
 set tcp_src Agent/TCP
 set tcp_sink Agent/TCPSink
+#$tcp_src set windowOption_ 9
 
 # ======================================================================
 # Define options
@@ -34,7 +35,7 @@ set val(ll)             LL                         ;# link layer type
 set val(ant)            Antenna/OmniAntenna        ;# antenna model
 set val(ifqlen)         50                         ;# max packet in ifq
 set val(nn)             $num_node                  ;# number of mobilenodes
-set val(rp)             DSDV                       ;# routing protocol
+set val(rp)             AODV                       ;# routing protocol
 
 # ======================================================================
 # Energy Parameters

@@ -1,0 +1,631 @@
+\documentclass{report}
+
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{listings}
+
+\begin{document}
+\begin{titlepage}
+    \begin{center}
+        \vspace*{1cm}
+        
+        \Large
+         CSE 322 ASSIGNMENT 3\\
+         Network Simulator 2  \\
+         
+        \normalsize
+        \vspace{1.5cm}
+        Mohammed Latif Siddiq\\
+        Student ID : 1505069\\
+        Nadia Anjum\\
+        Student ID : 1505085
+        
+        \vfill
+        
+        \vspace{0.8cm}
+        
+        \includegraphics[width=0.2\textwidth]{buet_logo.png}
+        
+        \Large
+        Department of Computer Science and Engineering\\
+       Bangladesh University of Engineering and Technology\\
+      (BUET)\\
+      Dhaka 1000\\
+       \today
+        
+    \end{center}
+\end{titlepage}
+
+\newpage
+
+\tableofcontents
+\chapter{802.11(Static) Without Modification}
+We simulate ns2 for 802.11 with statics nodes.We run separate simulator for UDP and TCP.
+For TCP(without modification)
+\begin{figure}
+  \caption{Flow vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_flowvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_flowvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_flowvsdrratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_flowvseng.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_flowvsthput.png}
+\end{figure}
+
+
+\begin{figure}
+  \caption{Node vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_tcp_30_nodevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_tcp_30_nodevsdratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_tcp_30_nodevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_tcp_30_nodevsenergy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_tcp_30_nodevsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Packet vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_packetvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_packetvsdelivryratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_packetvsdropration.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_packetvsenenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_packetvsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Range vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_rangevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Range vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_rangevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Range vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_rangevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Range vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_rangevsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Range vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_30_rangevsthrput.png}
+\end{figure}
+
+For UDP(without modification)
+\begin{figure}
+  \caption{Flow vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_flowvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_flowvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_flowvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_flowvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_flowvsthrput.png}
+\end{figure}
+
+
+\begin{figure}
+  \caption{Node vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_nodevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_nodevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_nodevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_nodevsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_nodevsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Packet vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_packetvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_packetvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_packetvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_packetvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_30_packetvsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Range vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_rangevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_rangevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_rangevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_rangevsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_udp_rangevsthrput.png}
+\end{figure}
+
+\chapter{802-11 (static) Modification}
+We modified mechanism for congestion control in TCP.
+We use random value instead of constent wnd.
+\begin{figure}
+  \caption{Flow vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_flowvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_flowvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_flowvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_flowvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_flowvsthrput.png}
+\end{figure}
+
+
+\begin{figure}
+  \caption{Node vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_nodevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_nodevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_nodevsdroptraatio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_nodevsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_nodevsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Packet vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_packetvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_packetvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_packetvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_packetvsenergy.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_packetvsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Range vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_rangevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_rangevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_rangevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_rangevsenergy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_11_tcp_70_rangevsthrput.png}
+\end{figure}
+
+\chapter{802-15-4 (Mobile) without Modification}
+
+For udp:
+\begin{figure}
+  \caption{Flow vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_flowvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_flowvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_flowvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_flowvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_flowvsthrput.png}
+\end{figure}
+
+
+\begin{figure}
+  \caption{Node vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Packet vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Speed vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_speedvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_speedvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_speedvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_speedvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_30_speedvsthrput.png}
+\end{figure}
+
+\chapter{802-15-4 (Mobile) with Modification}
+
+We modified in routing protocol : \textbf{AODV}
+
+The modified mechanism: 
+
+AODV protocol is extended with a \textbf{drop factor} that induces a \textbf{randomness} feature
+to result in Randomized Ad-Hoc On-Demand Routing (\textbf{R-AODV}) protocol. During the route discovery process, every intermediary or router nodes between the
+source and the destination nodes makes a decision to either broadcast/forward
+the \textbf{RREQ} packet further towards the destination or drop it. Before forwarding
+a RREQ packet, every node computes the drop factorwhich is a function of the
+inverse of the number of \textbf{hop counts} traversed by the RREQ packet. This drop
+factor lies in the range of 0 to 1. Also, the node generates a random number
+from 0 to 1. If this random number is higher than the drop factor, the node
+forwards the RREQ packet. Otherwise, the RREQ packet is dropped. Dropping
+of RREQ packets does not necessarily result in a new route discovery process
+by the source node. This is due to the fact that the original broadcast by the
+source node results in multiple RREQ packets via the neighbors and this diffusing wave results quickly in a large number of RREQ packets traversing the
+network in search of the destination. A major proportion of these packets are
+redundant due to the fact that in the ideal case, a single RREQ packet can
+find the best route. Also, a number of these packets diffusing in directions away
+from the destination shall eventually timeout. Hence, in R-AODV, the aim is to
+minimize on these redundant RREQ packets, or alternatively, drop as much as
+possible of these redundant RREQ packets. The drop policy is conservative and
+its value becomes lesser with higher number of hops. As RREQ packets get near
+the destination node, the chances of survival of RREQ packets is higher. Hence,
+the first phase of the route discovering process, that is, finding the destination
+node, is completed as soon as possible and a RREP packet can be transmitted
+from the destination node back to the source node.
+In R-AODV, the dropping of redundant RREQ packets reduces a proportion
+of RREQ packets that shall never reach the destination node, resulting in a decrease of network congestion. Hence, the ratio of the number of packets received
+by the nodes to the number of packets sent by the nodes, namely, throughput,
+should be higher in R-AODV compared to AODV.
+The following algorithm is used in the decision making process of whether to
+drop the RREQ packets by the intermediary or routing nodes.
+
+$Step\ 1:\ Calculate\ drop\_factor$
+	$drop\_factor\ =\ \frac{1}{Hop\_count\_of\_RREQ\_packet\ +\ 1}$
+	
+
+$Step\ 2:$ Calculate a random value in the range of 0 to 1.
+
+$Step\ 3:\ If\ (random\_value\ >\ drop\_factor)\ then\ broadcast\ or\ $
+
+$forward\ RREQ\_packet\ else\ drop\ RREQ\_packet$
+
+\begin{figure}
+  \caption{Flow vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_flowvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_flowvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_flowvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_flowvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Flow vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_flowvsthrput.png}
+\end{figure}
+
+
+\begin{figure}
+  \caption{Node vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Node vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_nodevsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Packet vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Packet vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_packetvsthrput.png}
+\end{figure}
+
+\begin{figure}
+  \caption{Speed vs Delay}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_70_speedvsdelay.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Delivary Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_70_speedvsdelratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Drop Ratio}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_70_speedvsdropratio.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Energy consumption}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_70_speedvsenrgy.png}
+\end{figure}
+\begin{figure}
+  \caption{Speed vs Throughput}
+  \centering
+    \includegraphics[width=1\textwidth]{802_15_4_70_speedvsthrput.png}
+\end{figure}
+\chapter{Summery Findings}
+ 
+\begin{itemize}
+  \item Packet delivery ratio is much higher in 802.11 than 802.15.4
+  \item Energy consumption is very low in 802.15.4
+  \item Throughput increased in modified AODV protocol
+\end{itemize}
+\end{document}

@@ -47,9 +47,22 @@ void tolayer5(int AorB, char datasent[20]);
 
 /********* STUDENTS WRITE THE NEXT SEVEN ROUTINES *********/
 
+#define BUFSZ 64
+#define WINDOW_SIZE 8
+#define INCREMENT 10.0
+#define START 1
+
+
+struct Node{
+    int seqnum; //for A and B
+    int nextbuf; // for A
+    struct pkt packetsend;// for B   
+    struct pkt pkts[BUFSZ]; // for A
+} A,B;
 /* called from layer 5, passed the data to be sent to other side */
 void A_output(struct msg message)
 {
+
 
 }
 

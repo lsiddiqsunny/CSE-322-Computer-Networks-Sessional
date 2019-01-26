@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include<queue>
+using namespace std;
 
 /* ******************************************************************
  ALTERNATING BIT AND GO-BACK-N NETWORK EMULATOR: SLIGHTLY MODIFIED
@@ -47,21 +49,70 @@ void tolayer5(int AorB, char datasent[20]);
 
 /********* STUDENTS WRITE THE NEXT SEVEN ROUTINES *********/
 
-#define BUFSZ 64
 #define WINDOW_SIZE 8
+#define MAXBUFSZ 64
 #define INCREMENT 10.0
 #define START 1
+float time = 0.000;
+int seqA;
+int seqB;
+pkt last_packet;
+queue<pkt>window;
+queue<pkt>  buffer;
+queue<pair<float,pkt> > Timestamp;
 
 
-struct Node{
-    int seqnum; //for A and B
-    int nextbuf; // for A
-    struct pkt packetsend;// for B   
-    struct pkt pkts[BUFSZ]; // for A
-} A,B;
+
+int get_checksum(struct pkt *packet) {
+    int checksum = 0;
+    int i;
+    checksum += packet->seqnum;
+    checksum += packet->acknum;
+    int l=strlen(packet->payload);
+    for ( i = 0; i < l; i++)
+    {
+        checksum += packet->payload[i];
+    }
+    return checksum;
+}
+
 /* called from layer 5, passed the data to be sent to other side */
 void A_output(struct msg message)
 {
+    struct pkt packet;
+    packet.seqnum=seqA;
+    strncpy(packet.payload, message.data, 20); //copying message to the packet
+    packet.checksum = get_checksum(&packet); //setting up checksum
+    if(window.size()<WINDOW_SIZE-1){
+              printf("  A_output: sending the packet : %s\n", message.data);
+              
+              if(window.size()==0){
+                   starttimer(0, INCREMENT);
+
+              }
+              tolayer3(0, packet);
+
+              window.push(packet);
+              Timestamp.push(make_pair(time,packet));
+
+             
+              
+    }
+    else{
+
+        if(buffer.size()!=MAXBUFSZ){
+            printf("  A_output: window is full.Queued in buffer : %s\n", message.data);
+            buffer.push(packet);
+
+        }
+        else{
+            printf("  A_output: buffer is full.Refused the message : %s\n", message.data);
+        }
+
+    }
+     seqA++;
+     seqA%=WINDOW_SIZE;
+
 
 
 }
@@ -72,15 +123,111 @@ void B_output(struct msg message)
 
 }
 
+void retransmit(){
+    if(window.size()!=0){
+        
+        queue<pkt>extra;
+        while(!Timestamp.empty()){
+            Timestamp.pop();
+        }
+        starttimer(0, INCREMENT);
+        while(!window.empty()){
+            pkt x=window.front();
+            extra.push(x);
+            window.pop();
+            Timestamp.push(make_pair(time,x));
+            tolayer3(0, x);
+
+        }
+
+        while(!extra.empty()){
+            pkt x=extra.front();
+            window.push(x);
+            extra.pop();
+        }
+    }
+}
+
 /* called from layer 3, when a packet arrives for layer 4 */
 void A_input(struct pkt packet)
 {
+
+    if(packet.checksum!=get_checksum(&packet)){
+        printf("  A_input: packet checksum does not match. Dropping the packet : %s.\n",packet.payload);
+        return;
+    }
+    int acknum=packet.acknum;
+
+    queue<pkt>extra;
+    queue<pair<float,pkt> > ts1;
+    bool ok=false;
+    float t=0.0;
+    while(!window.empty()){
+        pkt x=window.front();
+        extra.push(x);
+        window.pop();
+        ts1.push(Timestamp.front());
+        
+        
+
+        if(x.seqnum==acknum){
+            t=Timestamp.front().first;
+            ok=true;
+
+            Timestamp.pop();
+            break;
+        }
+        Timestamp.pop();
+            
+    }
+
+    if(!ok){
+        while(!extra.empty()){
+            window.push(extra.front());
+            extra.pop();
+        }
+        
+        printf("  A_input: Duplicate acknowledgement received.Retransmitting all packets.");
+       // stoptimer(0);
+        retransmit();
+        return;
+    }
+
+    printf("  A_input: Acknowledgement received for the packet : %s.\n",packet.payload);
+    stoptimer(0);
+    if(window.size()==0 and buffer.size()==0){
+        printf("  A_input: No new packet in buffer and window.\n");
+        return ;
+    }
+    if(window.size()!=0){
+        printf("  A_input: Strating timer for previous packet\n");
+        starttimer(0,min(0.0,INCREMENT-(Timestamp.front().first-t)));
+        return;
+    }
+    while(window.size()<WINDOW_SIZE-1){
+        printf("  A_input: Sending new packet from buffer if any.\n");
+        if(!buffer.empty()){
+            window.push(buffer.front());
+            Timestamp.push(make_pair(time,buffer.front()));
+            tolayer3(0,buffer.front());
+            buffer.pop();
+        }
+        else{
+            break;
+        }
+    }
+
+
+
+
 
 }
 
 /* called when A's timer goes off */
 void A_timerinterrupt(void)
 {
+    printf("  A_timerinterrupt: Retransmitting all packets.\n");
+    retransmit();
 
 }
 
@@ -88,7 +235,7 @@ void A_timerinterrupt(void)
 /* entity A routines are called. You can use it to do any initialization */
 void A_init(void)
 {
-
+    seqA=0;
 }
 
 /* Note that with simplex transfer from a-to-B, there is no B_output() */
@@ -96,6 +243,33 @@ void A_init(void)
 /* called from layer 3, when a packet arrives for layer 4 at B*/
 void B_input(struct pkt packet)
 {
+    if(packet.checksum!=get_checksum(&packet)){
+        printf("  B_input: packet checksum does not match. Sending NAK for the packet : %s.\n",packet.payload);
+
+        tolayer3(1, last_packet);
+        return;
+    }
+    if(seqB==packet.seqnum){
+        printf("  B_input: received the packet: %s\n", packet.payload);
+        printf("  B_input: sending ACK.\n");
+        struct pkt packet1;
+        packet1.acknum = seqB;
+        strncpy(packet1.payload,packet.payload,20);
+        packet1.checksum = get_checksum(&packet1);
+        tolayer3(1,packet1);
+        tolayer5(1, packet.payload);
+        last_packet=packet;
+        seqB++;
+        seqB%=WINDOW_SIZE;
+    }
+    else{
+        printf("  B_input: not the expected seq. Sending NAK for the packet : %s.\n",packet.payload);
+        tolayer3(1, last_packet);
+
+
+    }
+
+    
 
 }
 
@@ -109,6 +283,10 @@ void B_timerinterrupt(void)
 /* entity B routines are called. You can use it to do any initialization */
 void B_init(void)
 {
+    seqB=0;
+    last_packet.payload[0]='\0';
+    last_packet.acknum=seqB;
+    last_packet.checksum=get_checksum(&last_packet);
 
 }
 
@@ -152,7 +330,7 @@ struct event *evlist = NULL; /* the event list */
 int TRACE = 1;     /* for my debugging */
 int nsim = 0;      /* number of messages from 5 to 4 so far */
 int nsimmax = 0;   /* number of msgs to generate, then stop */
-float time = 0.000;
+
 float lossprob;    /* probability that a packet is dropped  */
 float corruptprob; /* probability that one bit is packet is flipped */
 float lambda;      /* arrival rate of messages from layer 5 */

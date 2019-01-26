@@ -63,6 +63,7 @@ int get_checksum(struct pkt *packet) {
     int checksum = 0;
     checksum += packet->seqnum;
     checksum += packet->acknum;
+    int l=strlen(packet->payload);
     for (int i = 0; i < 20; ++i)
         checksum += packet->payload[i];
     return checksum;

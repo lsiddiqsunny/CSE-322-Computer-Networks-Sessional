@@ -352,6 +352,7 @@ int main()
     char c;
 
     init();
+    freopen("output_gbn.doc","w",stdout);
     A_init();
     B_init();
 

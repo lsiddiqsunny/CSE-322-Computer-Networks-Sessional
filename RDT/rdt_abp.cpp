@@ -231,6 +231,7 @@ void insertevent(struct event *p);
 
 int main()
 {
+    
     struct event *eventptr;
     struct msg msg2give;
     struct pkt pkt2give;
@@ -239,6 +240,7 @@ int main()
     char c;
 
     init();
+    freopen("output_abp.doc","w",stdout);
     A_init();
     B_init();
 

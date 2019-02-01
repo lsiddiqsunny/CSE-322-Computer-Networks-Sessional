@@ -221,21 +221,24 @@ int main()
     int havetotoggle=ceil((serializeddata.size())*(p));
     int framesize=serializeddata.size();
     vector<int>pos;
-    srand(time(NULL));
-    for(int i=1; i<=havetotoggle; i++)
+    std::mt19937_64 rng;
+    // initialize the random number generator with time-dependent seed
+    uint64_t timeSeed = chrono::high_resolution_clock::now().time_since_epoch().count();
+    seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed>>32)};
+    rng.seed(ss);
+    // initialize a uniform distribution between 0 and 1
+    uniform_real_distribution<double> unif(0, 1);
+    // ready to generate random numbers
+
+    for(int i=0; i<framesize; i++)
     {
-        int x=rand()%framesize;
-        int co=0;
-        while(find(pos.begin(),pos.end(),x)!=pos.end())
-        {
-            co++;
-            if(co>=(framesize/havetotoggle))
-            {
-                break;
-            }
-            x=rand()%framesize;
+        double currentRandomNumber = unif(rng);
+       // cout<<currentRandomNumber<<endl;
+        if(currentRandomNumber>p){
+            continue;
         }
-        pos.push_back(x);
+
+        pos.push_back(i);
     }
     for(int i=0; i<pos.size(); i++)
     {

@@ -91,11 +91,11 @@ int main()
 
     cout<<"\ndata block after adding check bits : "<<endl;
 
-
+int total=m+3;
     for(int i=0; i<(sz/m); i++)
     {
         // cout<<i<<endl;
-        int total=m+3;
+
         for(int j=0; j<total; j++)
         {
             int mask=1;
@@ -103,6 +103,7 @@ int main()
             mask--;
            // cout<<mask<<endl;
            if(mask>datablock[i].size()){
+               total--;
             continue;
            }
             datablock[i].insert(datablock[i].begin()+mask,0);
@@ -158,7 +159,7 @@ int main()
 
     cout<<"\ndata bits after column-wise serialization : "<<endl;
     vector<int>serializeddata;
-    for(int i=0; i<(m*8+m+2); i++)
+    for(int i=0; i<(m*8+total); i++)
     {
         for(int j=0; j<(sz/m); j++)
         {
@@ -191,12 +192,9 @@ int main()
 
     vector<int>reminder;
     bool ok=false;
-    for(int i=0; i<serializeddata.size(); i++)
+    for(int i=remserializeddata.size(); i<serializeddata.size(); i++)
     {
-        if(serializeddata[i]==1)
-            ok=true;
-        if(!ok)
-            continue;
+
 
         reminder.push_back(serializeddata[i]);
     }
@@ -208,7 +206,7 @@ int main()
     //cout<<serializeddata.size()<<" "<<sz<<endl;
     for(int i=0; i<serializeddata.size(); i++)
     {
-        if(i>=((sz/m)*(m+2+m*8)))
+        if(i>=((sz/m)*(total+m*8)))
         {
             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 3);
 
@@ -295,7 +293,7 @@ int main()
     vector<int>datablock1[sz/m];
     vector<int>receiveddata[sz/m];
     serializeddata.clear();
-    for(int i=0; i<((sz/m)*(m+2+m*8)); i++)
+    for(int i=0; i<((sz/m)*(total+m*8)); i++)
     {
 
         serializeddata.push_back(remserializeddata[i]);
@@ -303,7 +301,7 @@ int main()
     int l=sz/m;
     for(int i=0; i<l; i++)
     {
-        for(int k=0; k<m+2+m*8; k++)
+        for(int k=0; k<total+m*8; k++)
         {
             datablock1[i].push_back(serializeddata[i+l*k]);
         }
@@ -341,7 +339,6 @@ int main()
     for(int i=0; i<(sz/m); i++)
     {
         // cout<<i<<endl;
-        int total=m+2;
         pos.clear();
         for(int k=0; k<total; k++)
         {
@@ -372,7 +369,7 @@ int main()
             num*=2;
         }
         position--;
-        if(position<0 || position>=(m*8+m+2))
+        if(position<0 || position>=(m*8+total))
             continue;
         // cout<<position<<endl;
         datablock1[i][position]^=1;
